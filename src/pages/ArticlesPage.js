@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import articleContent from "./article-content";
 import ArticlesList from "../components/ArticlesList";
 import NotFoundPage from "./NotFoundPage";
+import CommentsList from "../components/CommentsList";
+import UpvotesSection from "../components/UpvotesSection";
+import AddCommentForm from "../components/AddCommentForm";
 
 const ArticlesPage = ({match}) => {
     const name = match.params.name;
@@ -14,7 +17,6 @@ const ArticlesPage = ({match}) => {
             const fetchData = async () => {
                    const result = await fetch(`http://localhost:8000/api/articles/${name}`);
                    const body = await result.json();
-                   console.log(body);
                    setArticleInfo(body);
             }
             fetchData();
@@ -26,11 +28,13 @@ const ArticlesPage = ({match}) => {
     return (
         <React.Fragment>
             <h1>{article.title}</h1>
-            <p>This post has been upvoted {articleInfo.upvotes} times</p>
+            <UpvotesSection articleName={name} upvotes={articleInfo.upvotes} setArticleInfo={setArticleInfo}/>
             {article.content.map(((paragraph, key) => (
 
                 <p key={key}>{paragraph}</p>
             )))}
+            <CommentsList comments={articleInfo.comments} />
+            <AddCommentForm articleName={name} setArticleInfo={setArticleInfo} />
             <h1>Related Articles: </h1>
             <ArticlesList articles={otherArticles} />
         </React.Fragment>
